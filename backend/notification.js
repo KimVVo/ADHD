@@ -7,6 +7,11 @@ router.get("/test", (req, res) => {
 router.post("/notify-task", async (req, res) => {
   const { email, taskTitle, dueDate } = req.body;
 
+  console.log("📩 Email request received with:");
+  console.log("Email:", email);
+  console.log("Task:", taskTitle);
+  console.log("Due Date:", dueDate);
+
   if (!email || !taskTitle || !dueDate) {
     return res.status(400).json({ message: "Missing fields" });
   }
@@ -26,6 +31,7 @@ router.post("/notify-task", async (req, res) => {
       subject: `Task Reminder: ${taskTitle}`,
       text: `Your task "${taskTitle}" is due at ${dueDate}. Please complete it soon.`,
     });
+    console.log("✅ Email sent successfully:", info.response);
 
     res.status(200).json({ message: "Email sent" });
   } catch (err) {
