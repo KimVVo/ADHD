@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MdMusicNote } from 'react-icons/md';
-import { IoVolumeLow } from "react-icons/io5";
+import { IoVolumeLow } from 'react-icons/io5';
 
 const musicOptions = {
   Lofi: 'q0ff3e-A7DY',
@@ -14,32 +14,33 @@ const BackgroundMusic = () => {
   const [showMusic, setShowMusic] = useState(false);
   const [volume, setVolume] = useState(50);
   const [currentTrack, setCurrentTrack] = useState(null);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
   const playerRef = useRef(null);
 
+  // Load YouTube API once
   useEffect(() => {
-    if (showMusic) {
-      if (!window.YT) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      }
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      document.body.appendChild(tag);
+    } else if (!playerRef.current) {
+      window.onYouTubeIframeAPIReady();
+    }
 
-      window.onYouTubeIframeAPIReady = () => {
+    window.onYouTubeIframeAPIReady = () => {
+      if (!playerRef.current) {
         playerRef.current = new window.YT.Player('yt-player', {
           height: '0',
           width: '0',
           events: {
-            onReady: onPlayerReady,
+            onReady: (event) => {
+              setIsPlayerReady(true);
+              event.target.setVolume(volume);
+            },
           },
         });
-      };
-    } else {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-        playerRef.current = null;
       }
-    }
+    };
 
     return () => {
       if (playerRef.current) {
@@ -47,21 +48,16 @@ const BackgroundMusic = () => {
         playerRef.current = null;
       }
     };
-  }, [showMusic]);
-
-  const onPlayerReady = (event) => {
-    playerRef.current = event.target;
-    playerRef.current.setVolume(volume);
-  };
+  }, []);
 
   const handleMusicChange = (id) => {
     setCurrentTrack(id);
-    if (playerRef.current && playerRef.current.loadVideoById) {
+    if (playerRef.current && isPlayerReady) {
       playerRef.current.loadVideoById({
         videoId: id,
         suggestedQuality: 'small',
       });
-      playerRef.current.setLoop(true);
+      playerRef.current.setLoop(true); // Will only work if playlist is set
       playerRef.current.setVolume(volume);
     }
   };
@@ -69,7 +65,7 @@ const BackgroundMusic = () => {
   const handleVolumeChange = (e) => {
     const vol = parseInt(e.target.value, 10);
     setVolume(vol);
-    if (playerRef.current && playerRef.current.setVolume) {
+    if (playerRef.current && isPlayerReady) {
       playerRef.current.setVolume(vol);
     }
   };
@@ -77,12 +73,15 @@ const BackgroundMusic = () => {
   const stopAudio = () => {
     if (playerRef.current && playerRef.current.stopVideo) {
       playerRef.current.stopVideo();
-      setCurrentTrack(null);
     }
+    setCurrentTrack(null);
   };
 
   return (
-    <div className="absolute bottom-5 left-25">
+    <div className="absolute bottom-5 left-25 z-50">
+      {/* Always mounted hidden player */}
+      <div id="yt-player" style={{ display: 'none' }}></div>
+
       {/* Toggle Button */}
       <button
         className="text-white opacity-80 hover:opacity-90 -mr-4 shadow-2xl p-3 pr-6"
@@ -94,12 +93,9 @@ const BackgroundMusic = () => {
       {/* Music Dropdown */}
       {showMusic && (
         <div className="absolute bottom-16 left-0 bg-white glass-effect shadow-lg rounded-lg p-1 w-45">
-          {/* Hidden Player */}
-          <div id="yt-player" style={{ display: 'none' }}></div>
-
           {/* Volume Control */}
           <div className="flex items-center justify-between p-2 mb-2">
-            <span className="text-xs text-white"><IoVolumeLow size={22}/></span>
+            <span className="text-xs text-white"><IoVolumeLow size={22} /></span>
             <input
               type="range"
               min="0"
@@ -119,7 +115,7 @@ const BackgroundMusic = () => {
                 onClick={() => handleMusicChange(musicOptions[type])}
                 className={`h-12 w-20 rounded-md border-2 transition ${
                   currentTrack === musicOptions[type]
-                    ? 'border-blue-400 shadow-lg border-2'
+                    ? 'border-blue-400 shadow-lg'
                     : 'border-gray-500 hover:border-gray-400'
                 }`}
                 style={{
@@ -137,12 +133,10 @@ const BackgroundMusic = () => {
             <button
               onClick={stopAudio}
               className={`h-12 w-20 rounded-md border-2 transition bg-black ${
-                currentTrack === null ? 'border-blue-400 shadow-lg border-2' : 'border-gray-500 hover:border-gray-400'
+                currentTrack === null
+                  ? 'border-blue-400 shadow-lg'
+                  : 'border-gray-500 hover:border-gray-400'
               }`}
-            //   style={{
-            //     backgroundImage: 'url(/images/Genres/none.jpg)',
-            //     backgroundSize: 'cover',
-            //   }}
             >
               <div className="h-full w-full rounded-md bg-black bg-opacity-30 flex items-center justify-center">
                 <span className="text-white text-xs font-medium">None</span>
