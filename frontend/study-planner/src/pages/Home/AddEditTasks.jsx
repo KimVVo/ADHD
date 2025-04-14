@@ -41,35 +41,39 @@ const AddEditTasks = ({
     console.log(`Task: ${task.title}`);
   };
 
-  // Add Task
   const addNewTask = async () => {
-    try {
-      const formattedDueDate = dueDate ? dueDate.toISOString() : null; // Convert to UTC
-      const response = await axiosInstance.post("/add-task", {
-        title: title,
-        content: content,
-        tags: tags,
-        dueDate: formattedDueDate,
-        // reminderTime: reminderTime,
-      });
+  try {
+    // If no due date is provided, default to today's date
+    const defaultDueDate = new Date();
+    const formattedDueDate = dueDate
+      ? dueDate.toISOString()
+      : defaultDueDate.toISOString(); // Convert to UTC
 
-      if (response.data && response.data.task) {
-        console.log("Task added with due date (UTC):", formattedDueDate); // Log the UTC due date
-        showToastMessage("Task added successfully");
-        getAllTasks();
-        onClose();
-        scheduleNotification(response.data.task); // Schedule notification for the new task
-      }
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        setError(error.response.data.message);
-      }
+    const response = await axiosInstance.post("/add-task", {
+      title: title,
+      content: content,
+      tags: tags,
+      dueDate: formattedDueDate,
+      // reminderTime: reminderTime,
+    });
+
+    if (response.data && response.data.task) {
+      console.log("Task added with due date (UTC):", formattedDueDate); // Log the UTC due date
+      showToastMessage("Task added successfully");
+      getAllTasks();
+      onClose();
+      scheduleNotification(response.data.task); // Schedule notification for the new task
     }
-  };
+  } catch (error) {
+    if (
+      error.response &&
+      error.response.data &&
+      error.response.data.message
+    ) {
+      setError(error.response.data.message);
+    }
+  }
+};
 
   // Edit Task
   const editTask = async () => {
