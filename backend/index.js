@@ -41,6 +41,9 @@ const validateHabitInput = (req, res, next) => {
 
 app.use(express.json());
 
+const notification = require("./notification");
+app.use("/notification", notification);
+
 app.use(
   cors({
     origin: "*",
