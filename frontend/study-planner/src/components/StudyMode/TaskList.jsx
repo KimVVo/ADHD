@@ -37,8 +37,7 @@ const TaskList = ({ type, icon, isActive, onClick }) => {
         <div className="relative">
             {icon && React.cloneElement(icon, { className: "text-white opacity-80 hover:opacity-90 shadow-2xl text-xl hover:scale-110 transition-all ease-linear", onClick })}
             {isActive && (
-                <div className="glass-effect absolute top-full -right-3 bg-white shadow:md rounded-lg p-2 w-64 z-10 mt-3
-                before:absolute before:top-0 before:right-4 before:w-3 before:h-3 before:rotate-45 before:-translate-y-1/2 before:bg-white/30 before:backdrop-blur-md">
+                <div className="glass-effect absolute top-full -right-3 bg-white shadow:md rounded-lg p-2 w-64 z-10 mt-3">
                     
                     <div className="flex justify-between items-center mb-2">
                         <h3 className="font-semibold text-white">{type === "tasks" ? "Task List" : "Distraction List"}</h3>
@@ -49,7 +48,7 @@ const TaskList = ({ type, icon, isActive, onClick }) => {
                         >
                             <FaQuestionCircle className="text-white cursor-pointer" />
                             {showInfo && (
-                                <div className="absolute -right-3 top-6 bg-gray-100 opacity-60 text-black p-2 text-xs rounded shadow-xl w-60 z-20 transform scale-95 transition-transform duration-300 before:absolute before:top-0 before:right-2 before:w-3 before:h-3 before:bg-gray-100 before:rotate-45 before:-translate-y-1/2 ">
+                                <div className="absolute -right-3 top-6 bg-gray-100 opacity-60 text-black p-2 text-xs rounded shadow-xl w-60 z-20 transform scale-95 transition-transform duration-300">
                                     {type === "tasks" 
                                         ? "Use this list to track your important tasks." 
                                         : "Use this list to log distractions and come back to them later."}
@@ -93,13 +92,13 @@ const TaskManager = () => {
             <div className="flex gap-4">
                 <TaskList 
                     type="tasks" 
-                    icon={<MdAddTask />} 
+                    icon={<MdAddTask size={30}/>} 
                     isActive={activeList === "tasks"} 
                     onClick={() => toggleList("tasks")} 
                 />
                 <TaskList 
                     type="distractions" 
-                    icon={<GiDistraction />} 
+                    icon={<GiDistraction size={30} />} 
                     isActive={activeList === "distractions"} 
                     onClick={() => toggleList("distractions")} 
                 />
