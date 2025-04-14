@@ -5,6 +5,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import Nav from "../Navbar/Nav";
 import TaskManager from "./TaskList";
 import BackgroundSelector from "./BackgroundSelector";
+import BackgroundMusic from "./BackgroundMusic";
 
 const DEFAULT_TIMES = {
   Pomodoro: 25 * 60,
@@ -133,8 +134,8 @@ const StudyMode = () => {
         />
       </div>
 
-      <div className="mt-6 flex items-center space-x-4">
-        <button className="px-5 py-2 bg-white font-semibold rounded-lg transition-all glass-effect border-white text-white shadow-sm hover:shadow-md backdrop-filter backdrop-blur-lg bg-opacity-15 border" onClick={toggleTimer}>
+      <div className="mt-6 flex items-center space-x-4 relative">
+        <button className="px-5 py-2 font-semibold rounded-lg transition-all glass-effect-start border-neutral-500 text-white hover:shadow-lg" onClick={toggleTimer}>
           {isRunning ? "Pause" : "Start"}
         </button>
         <button className="text-white opacity-80 hover:opacity-90 shadow-xl hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" onClick={resetTimer}>
@@ -143,11 +144,9 @@ const StudyMode = () => {
 
           {/* absolute top-full -right-3 bg-white shadow:md rounded-lg p-2 w-64 z-10 mt-3
                 before:absolute before:top-0 before:right-4 before:w-3 before:h-3 before:bg-white before:rotate-45 before:-translate-y-1/2 */}
-
-        <div className="relative">
-          <button onClick={() => setShowSettings(!showSettings)}><FaCog size={24} /></button>
+          <button className="text-white opacity-80 hover:opacity-90 shadow-xl -mr-4 hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" onClick={() => setShowSettings(!showSettings)}><FaCog size={24} /></button>
           {showSettings && (
-            <div className="absolute -left-0.5 top-9 shadow:md glass-effect text-white p-2 w-35 rounded-lg text-xs before:absolute before:top-0 before:left-2 before:w-3 before:h-3 before:bg-white/30 before:backdrop-blur-md before:rotate-45 before:-translate-y-1/2">
+            <div className="absolute left-full top-full mt-1 shadow:md glass-effect text-white p-2 w-35 rounded-lg text-xs">
               {Object.keys(tempDurations).map((key) => (
                 <div key={key} className="flex justify-between py-1">
                   <span>{key}</span>
@@ -157,7 +156,7 @@ const StudyMode = () => {
                     onChange={(e) => setTempDurations({ ...tempDurations, [key]: e.target.value * 60 })} 
                     className="w-12 bg-gray-700 text-white p-1 -mt-1 rounded" 
                   />
-                </div>
+                  </div>
               ))}
               <div className="flex justify-between py-2">
                 <span>Auto Transition</span>
@@ -169,9 +168,9 @@ const StudyMode = () => {
               </div>
             </div>
           )}
-        </div>
       </div>
       <BackgroundSelector background={background} setBackground={handleBackgroundChange} />
+      <BackgroundMusic />
     </div>
   );
 };
