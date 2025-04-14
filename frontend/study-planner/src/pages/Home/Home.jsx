@@ -118,11 +118,21 @@ const Home = () => {
           );
           // Send email notification
           if (userInfo?.email) {
-            axiosInstance.post("notification/notify-task", {
-              email: userInfo.email,
-              taskTitle: task.title,
-              dueDate: format(dueDate, "yyyy-MM-dd HH:mm:ss"),
-            });
+            axiosInstance
+              .post("/notification/notify-task", {
+                email: userInfo.email,
+                taskTitle: task.title,
+                dueDate: format(dueDate, "yyyy-MM-dd HH:mm:ss"),
+              })
+              .then((res) => {
+                console.log("✅ Email Notification Sent:", res.data);
+              })
+              .catch((err) => {
+                console.error(
+                  "❌ Error sending email:",
+                  err.response?.data || err.message
+                );
+              });
           }
           setNotifiedTasks((prev) => [...prev, task._id]);
         } else {
