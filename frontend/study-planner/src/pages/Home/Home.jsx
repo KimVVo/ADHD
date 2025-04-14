@@ -93,8 +93,7 @@ const Home = () => {
       console.log("Due Date Raw:", task.dueDate);
 
       if (task.dueDate) {
-        const dueDate = new Date(task.dueDate); // Parse the due date
-
+        const dueDate = new Date(task.dueDate);
         const timeDifference = dueDate - now;
 
         console.log(
@@ -116,24 +115,23 @@ const Home = () => {
             )}`,
             "warning"
           );
+
           // Send email notification
-          if (userInfo?.email) {
-            axiosInstance
-              .post("/notification/notify-task", {
-                email: userInfo.email,
-                taskTitle: task.title,
-                dueDate: format(dueDate, "yyyy-MM-dd HH:mm:ss"),
-              })
-              .then((res) => {
-                console.log("✅ Email Notification Sent:", res.data);
-              })
-              .catch((err) => {
-                console.error(
-                  "❌ Error sending email:",
-                  err.response?.data || err.message
-                );
-              });
-          }
+          axiosInstance
+            .post("/notification/notify-task", {
+              taskTitle: task.title,
+              dueDate: format(dueDate, "yyyy-MM-dd HH:mm:ss"),
+            })
+            .then((res) => {
+              console.log("✅ Email Notification Sent:", res.data);
+            })
+            .catch((err) => {
+              console.error(
+                "❌ Error sending email:",
+                err.response?.data || err.message
+              );
+            });
+
           setNotifiedTasks((prev) => [...prev, task._id]);
         } else {
           console.log("Task not within 15-minute threshold");
