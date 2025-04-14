@@ -81,7 +81,7 @@ const Home = () => {
     }
   };
 
-  const checkDueDates = () => {
+ const checkDueDates = () => {
     const now = new Date();
     const notificationThreshold = 15 * 60 * 1000; // 15 minutes before due date
 
@@ -94,10 +94,6 @@ const Home = () => {
 
       if (task.dueDate) {
         const dueDate = new Date(task.dueDate); // Parse the due date
-
-        // Debug logs for local and UTC representations
-        console.log("Due Date (Local):", dueDate.toString());
-        console.log("Due Date (UTC):", dueDate.toISOString());
 
         const timeDifference = dueDate - now;
 
@@ -120,6 +116,14 @@ const Home = () => {
             )}`,
             "warning"
           );
+          // Send email notification
+          if (userInfo?.email) {
+            axiosInstance.post("notification/notify-task", {
+              email: userInfo.email,
+              taskTitle: task.title,
+              dueDate: format(dueDate, "yyyy-MM-dd HH:mm:ss"),
+            });
+          }
           setNotifiedTasks((prev) => [...prev, task._id]);
         } else {
           console.log("Task not within 15-minute threshold");
