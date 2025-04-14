@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MdWallpaper } from "react-icons/md";
 
 const backgrounds = [
   { id: 1, src: "images/backgrounds/5fbe1685b1f7d617361fdb63e0c94a7e.gif", alt: "Background 1" },
@@ -16,19 +17,15 @@ const BackgroundSelector = ({ background, setBackground }) => {
     <div className="absolute bottom-5 right-5">
       {/* Toggle Button */}
       <button
-        className="p-3 bg-gray-800 text-white rounded-full shadow-lg hover:bg-gray-700 transition"
+        className="text-white opacity-80 hover:opacity-90 -mr-4 shadow-2xlp-3 pr-6"
         onClick={() => setShowDropdown(!showDropdown)}
       >
-        🎨
+        <MdWallpaper size={30} />
       </button>
 
       {/* Background Dropdown */}
       {showDropdown && (
-        <div className="absolute bottom-16 right-0 bg-white glass-effect shadow-lg rounded-lg p-1 flex flex-wrap gap-2 w-45
-        before:absolute before:top-full before:right-4 before:w-3 before:h-3 before:rotate-45 before:-translate-y-1/2 
-        before:bg-white/30 before:backdrop-blur-md before:border-<0.5> before:border-white before:shadow-lg">
-    
-    
+        <div className="absolute bottom-16 right-0 bg-white glass-effect shadow-lg rounded-lg p-1 flex flex-wrap gap-2 w-45">
           {backgrounds.map((bg) => (
             <button
               key={bg.id}
