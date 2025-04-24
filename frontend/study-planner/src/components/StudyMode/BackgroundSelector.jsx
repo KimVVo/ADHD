@@ -14,10 +14,10 @@ const BackgroundSelector = ({ background, setBackground }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
-    <div className="absolute bottom-5 right-5">
+    <div className="absolute bottom-5 right-15 sm:right-5">
       {/* Toggle Button */}
       <button
-        className="text-white opacity-80 hover:opacity-90 -mr-4 shadow-2xlp-3 pr-6"
+        className="text-white opacity-80 hover:opacity-90 -mr-4 shadow-2xl p-3 pr-6"
         onClick={() => setShowDropdown(!showDropdown)}
       >
         <MdWallpaper size={30} />
