@@ -74,7 +74,7 @@ const BackgroundMusic = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="absolute bottom-5 left-12 sm:left-25">
       <button
         className="text-white opacity-80 hover:opacity-90 shadow-2xl p-3 pr-6"
         onClick={() => setShowMusic(!showMusic)}
