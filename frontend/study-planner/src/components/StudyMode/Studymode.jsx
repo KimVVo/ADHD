@@ -40,20 +40,6 @@ const StudyMode = () => {
     return () => clearInterval(timer);
   }, [isRunning, time]);
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axiosInstance.get("/get-user");
-        if (response.data && response.data.user) {
-          setUserInfo(response.data.user);
-        }
-      } catch (err) {
-        console.error("Failed to fetch user info:", err);
-      }
-    };
-  
-    fetchUserInfo();
-  }, []);
 
   const handleSessionEnd = () => {
     if (autoTransition) {
@@ -110,16 +96,15 @@ const StudyMode = () => {
   };
 
   return (
-    <div className="relative flex bg-black flex-col items-center justify-center min-h-screen w-full text-white studymode px-4"
+    <div className="relative flex bg-black flex-col items-center justify-center min-h-screen w-full text-white studymode left-10"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",
         backgroundPosition: "center"
       }}>
       <Nav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      {/* <UniversalNavbar userInfo={userInfo} pageTitle="Study Mode" /> */}
 
-      <div className="fixed top-2 right-6 flex gap-3 z-50">
+      <div className="fixed top-2 right-16 sm:right-6 flex gap-3 z-50">
         <TaskManager />
       </div>
 
@@ -139,7 +124,7 @@ const StudyMode = () => {
         ))}
       </div>
 
-      <div style={{ width: '80vw', maxWidth: '300px', height: 'auto', aspectRatio: '1/1' }} className="timer rounded-full">
+      <div className="timer rounded-full w-[70vw] sm:w-[300px] aspect-square" style={{ width: '80vw', maxWidth: '300px', height: 'auto', aspectRatio: '1/1' }}>
         <CircularProgressbar
           value={percentage}
           text={formatTime(time)}
@@ -200,14 +185,9 @@ const StudyMode = () => {
         )}
       </div>
       
-      <div className="mt-6 w-full max-w-md">
-        <BackgroundSelector background={background} setBackground={handleBackgroundChange} />
+      <BackgroundSelector background={background} setBackground={handleBackgroundChange} />
+      <BackgroundMusic />
       </div>
-
-      <div className={`fixed bottom-5 ${sidebarOpen ? 'left-72 md:left-24' : 'left-5 md:left-24'} transition-all duration-300 z-20`}>
-        <BackgroundMusic />
-      </div>
-    </div>
   );
 };
 
