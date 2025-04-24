@@ -41,7 +41,11 @@ function Start() {
           "This is a screening suggestion, not a diagnosis. A licensed professional should always evaluate further."
   */}
   return (
-    <div className="fixed inset-0 flex flex-col font-montserrat">
+    <>
+    <div>
+    <UniversalNavbar userInfo={userInfo} pageTitle="ADHD Detector" />
+    </div>
+    <div className="fixed inset-0 flex flex-col font-montserrat overflow-y-auto">
       {/* Background image layer */}
       <div className="absolute inset-0 z-0">
         <img
@@ -49,10 +53,7 @@ function Start() {
           className="w-full h-full object-cover opacity-50"
         />
       </div>
-
-      {/* Universal Navbar on top */}
-      <UniversalNavbar userInfo={userInfo} pageTitle="ADHD Detector" />
-
+      
       <div className="relative z-10 flex flex-1 w-full">
         {/* Side Navigation */}
         <div className="w-20 z-10">
@@ -60,8 +61,8 @@ function Start() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center px-4">
-          <div className="w-full h-auto flex flex-col justify-center bg-white/90 rounded-3xl shadow-xl text-left p-10 mt-20">
+        <div className="flex-1 flex items-center justify-center px-4 ">
+          <div className=" w-full h-auto flex flex-col justify-center bg-white/90 rounded-3xl shadow-xl text-left p-10 mt-20 mb-10">
             <div>
             <b>Welcome!</b> This questionnaire is based on the <b>Adult ADHD Self-Report Scale (ASRS v1.1)</b> developed by the World Health Organization (WHO) and leading ADHD researchers. 
               It contains <b>18 questions</b> designed to help screen for signs of <b>Attention-Deficit/Hyperactivity Disorder (ADHD)</b> in adults. 
@@ -118,6 +119,7 @@ function Start() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
