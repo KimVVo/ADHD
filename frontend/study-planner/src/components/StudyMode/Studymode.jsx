@@ -124,20 +124,20 @@ const StudyMode = () => {
         ))}
       </div>
 
-      <div className="timer rounded-full w-[70vw] sm:w-[300px] aspect-square" style={{ width: '80vw', maxWidth: '300px', height: 'auto', aspectRatio: '1/1' }}>
-        <CircularProgressbar
-          value={percentage}
-          text={formatTime(time)}
-          styles={buildStyles({
-            textColor: "rgba(255, 255, 255, 1)",
-            pathColor: "rgba(255, 255, 255, 0.6)",
-            trailColor: "rgba(255, 255, 255, 0.3)",
-            pathTransitionDuration: 0.5,
-            backgroundColor: "rgba(0,0,0, 0.4)",
-            textSize: "25px",
-          })}
-        />
-      </div>
+      <div className="timer rounded-full w-[60vw] xs:w-[50vw] sm:w-[300px] aspect-square">
+  <CircularProgressbar
+    value={percentage}
+    text={formatTime(time)}
+    styles={buildStyles({
+      textColor: "rgba(255, 255, 255, 1)",
+      pathColor: "rgba(255, 255, 255, 0.6)",
+      trailColor: "rgba(255, 255, 255, 0.3)",
+      pathTransitionDuration: 0.5,
+      backgroundColor: "rgba(0,0,0, 0.4)",
+      textSize: "25px",
+    })}
+  />
+</div>
 
       <div className="mt-6 flex items-center space-x-4 relative">
         <button 
