@@ -117,7 +117,7 @@ const StudyMode = () => {
         backgroundPosition: "center"
       }}>
       <Nav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <UniversalNavbar userInfo={userInfo} pageTitle="Study Mode" />
+      {/* <UniversalNavbar userInfo={userInfo} pageTitle="Study Mode" /> */}
 
       <div className="fixed top-2 right-6 flex gap-3 z-50">
         <TaskManager />
