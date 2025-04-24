@@ -16,7 +16,6 @@ const BackgroundMusic = () => {
   const [currentTrack, setCurrentTrack] = useState(null);
   const playerRef = useRef(null);
 
-  // Load YT API only once
   useEffect(() => {
     if (!window.YT) {
       const tag = document.createElement('script');
@@ -31,7 +30,6 @@ const BackgroundMusic = () => {
     };
 
     return () => {
-      // Clean up player on unmount
       if (playerRef.current) {
         playerRef.current.destroy();
         playerRef.current = null;
@@ -76,9 +74,9 @@ const BackgroundMusic = () => {
   };
 
   return (
-    <div className="absolute bottom-5 left-25 z-50">
+    <div className="relative">
       <button
-        className="text-white opacity-80 hover:opacity-90 -mr-4 shadow-2xl p-3 pr-6"
+        className="text-white opacity-80 hover:opacity-90 shadow-2xl p-3 pr-6"
         onClick={() => setShowMusic(!showMusic)}
       >
         <MdMusicNote size={30} />
@@ -134,7 +132,6 @@ const BackgroundMusic = () => {
           </div>
         </div>
       )}
-      {/* This hidden div is where YouTube iframe mounts */}
       <div id="yt-player" style={{ display: 'none' }}></div>
     </div>
   );
