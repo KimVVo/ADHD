@@ -1,31 +1,32 @@
-import "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 
 const SearchBar = ({ value, onChange, handleSearch, onClearSearch }) => {
   return (
-    <div className="w-88 flex items-center px-4 bg-slate-100 rounded-md">
+    <div className="hidden md:flex w-88 items-center px-4 bg-slate-100 rounded-md">
       <input
         type="text"
         placeholder="Search tasks..."
-        className="w-full text-xs bg-transparent py-[11px] outline-none "
+        className="w-full text-xs bg-transparent py-[11px] outline-none"
         value={value}
         onChange={onChange}
       />
       {value && (
         <IoMdClose
-          className="text-slate-500 crusor-pointer hover:text-black mr-3"
+          className="text-slate-500 cursor-pointer hover:text-black mr-3"
           onClick={onClearSearch}
         />
       )}
       <FaMagnifyingGlass
-        className="text-slate-400 crusor-pointer hover:text-black"
+        className="text-slate-400 cursor-pointer hover:text-black"
         onClick={handleSearch}
       />
     </div>
   );
 };
+
 SearchBar.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
