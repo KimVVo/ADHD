@@ -3,9 +3,11 @@ import { FaRedo, FaCog } from "react-icons/fa";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import Nav from "../Navbar/Nav";
+import UniversalNavbar from "../Navbar/UniversalNavbar";
 import TaskManager from "./TaskList";
 import BackgroundSelector from "./BackgroundSelector";
 import BackgroundMusic from "./BackgroundMusic";
+import axiosInstance from "../../utils/axiosInstance";
 
 const DEFAULT_TIMES = {
   Pomodoro: 25 * 60,
@@ -20,9 +22,11 @@ const StudyMode = () => {
   const [sessions, setSessions] = useState(0);
   const [background, setBackground] = useState(() => localStorage.getItem("selectedBackground") || "images/backgrounds/1883de5bfee36b043b973bef00c561e0.gif");
   const [durations, setDurations] = useState({ ...DEFAULT_TIMES });
-  const [tempDurations, setTempDurations] = useState({ ...DEFAULT_TIMES }); // Temporary state for timer settings
+  const [tempDurations, setTempDurations] = useState({ ...DEFAULT_TIMES });
   const [showSettings, setShowSettings] = useState(false);
   const [autoTransition, setAutoTransition] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -35,6 +39,21 @@ const StudyMode = () => {
     }
     return () => clearInterval(timer);
   }, [isRunning, time]);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axiosInstance.get("/get-user");
+        if (response.data && response.data.user) {
+          setUserInfo(response.data.user);
+        }
+      } catch (err) {
+        console.error("Failed to fetch user info:", err);
+      }
+    };
+  
+    fetchUserInfo();
+  }, []);
 
   const handleSessionEnd = () => {
     if (autoTransition) {
@@ -80,8 +99,8 @@ const StudyMode = () => {
   };
 
   const saveSettings = () => {
-    setDurations({ ...tempDurations });  // Save the temporary settings to durations
-    setTime(tempDurations[mode]); // Reset time to match the updated setting
+    setDurations({ ...tempDurations });
+    setTime(tempDurations[mode]);
     setShowSettings(false);
   };
 
@@ -91,23 +110,24 @@ const StudyMode = () => {
   };
 
   return (
-    <div className="relative flex bg-black flex-col items-center justify-center h-screen w-full text-white studymode"
+    <div className="relative flex bg-black flex-col items-center justify-center min-h-screen w-full text-white studymode px-4"
       style={{
         backgroundImage: `url(${background})`,
         backgroundSize: "cover",
         backgroundPosition: "center"
       }}>
-      <Nav />
+      <Nav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <UniversalNavbar userInfo={userInfo} pageTitle="Study Mode" />
 
-      <div className="fixed top-2 right-6 flex gap-3">
+      <div className="fixed top-2 right-6 flex gap-3 z-50">
         <TaskManager />
       </div>
 
-      <div className="flex space-x-4 mb-6">
+      <div className="flex space-x-2 sm:space-x-4 mb-6 z-30">
         {["Pomodoro", "Short Break", "Long Break"].map((item) => (
           <button
             key={item}
-            className={`px-5 py-2 font-semibold rounded-lg transition-all ${
+            className={`px-2 sm:px-5 py-2 font-semibold rounded-lg transition-all text-sm sm:text-base ${
               mode === item
                 ? "bg-white text-white shadow-lg glass-effect"
                 : "glass-effect-inactive border border-neutral-500 text-white shadow-sm hover:shadow-md hover:bg-opacity-30"
@@ -119,7 +139,7 @@ const StudyMode = () => {
         ))}
       </div>
 
-      <div style={{ width: 300, height: 300 }} className="timer rounded-full">
+      <div style={{ width: '80vw', maxWidth: '300px', height: 'auto', aspectRatio: '1/1' }} className="timer rounded-full">
         <CircularProgressbar
           value={percentage}
           text={formatTime(time)}
@@ -135,42 +155,58 @@ const StudyMode = () => {
       </div>
 
       <div className="mt-6 flex items-center space-x-4 relative">
-        <button className="px-5 py-2 font-semibold rounded-lg transition-all glass-effect-start border-neutral-500 text-white hover:shadow-lg" onClick={toggleTimer}>
+        <button 
+          className="px-5 py-2 font-semibold rounded-lg transition-all glass-effect-start border-neutral-500 text-white hover:shadow-lg" 
+          onClick={toggleTimer}
+        >
           {isRunning ? "Pause" : "Start"}
         </button>
-        <button className="text-white opacity-80 hover:opacity-90 shadow-xl hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" onClick={resetTimer}>
+        <button 
+          className="text-white opacity-80 hover:opacity-90 shadow-xl hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" 
+          onClick={resetTimer}
+        >
           <FaRedo size={18} />
         </button>
 
-          {/* absolute top-full -right-3 bg-white shadow:md rounded-lg p-2 w-64 z-10 mt-3
-                before:absolute before:top-0 before:right-4 before:w-3 before:h-3 before:bg-white before:rotate-45 before:-translate-y-1/2 */}
-          <button className="text-white opacity-80 hover:opacity-90 shadow-xl -mr-4 hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" onClick={() => setShowSettings(!showSettings)}><FaCog size={24} /></button>
-          {showSettings && (
-            <div className="absolute left-full top-full mt-1 shadow:md glass-effect text-white p-2 w-35 rounded-lg text-xs">
-              {Object.keys(tempDurations).map((key) => (
-                <div key={key} className="flex justify-between py-1">
-                  <span>{key}</span>
-                  <input 
-                    type="number" 
-                    value={tempDurations[key] / 60} 
-                    onChange={(e) => setTempDurations({ ...tempDurations, [key]: e.target.value * 60 })} 
-                    className="w-12 bg-gray-700 text-white p-1 -mt-1 rounded" 
-                  />
-                  </div>
-              ))}
-              <div className="flex justify-between py-2">
-                <span>Auto Transition</span>
-                <input type="checkbox" checked={autoTransition} onChange={() => setAutoTransition(!autoTransition)} />
+        <button 
+          className="text-white opacity-80 hover:opacity-90 shadow-xl -mr-4 hover:rotate-15 active:rotate-90 hover:scale-110 transition-all ease-linear" 
+          onClick={() => setShowSettings(!showSettings)}
+        >
+          <FaCog size={24} />
+        </button>
+        
+        {showSettings && (
+          <div className="absolute -right-4 sm:right-auto sm:left-full top-full mt-1 shadow-md glass-effect text-white p-2 w-40 sm:w-35 rounded-lg text-xs">
+            {Object.keys(tempDurations).map((key) => (
+              <div key={key} className="flex items-center justify-between py-1 gap-2">
+                <span>{key}</span>
+                <input 
+                  type="number" 
+                  value={tempDurations[key] / 60} 
+                  onChange={(e) => setTempDurations({ ...tempDurations, [key]: e.target.value * 60 })} 
+                  className="w-10 bg-gray-700 text-white p-1 rounded" 
+                />
               </div>
-              <div className="flex justify-end space-x-2 mt-3">
-                <button className="bg-slate-700 text-white hover:bg-gray-700 active:bg-gray-800 px-3 py-1 rounded transition-all" onClick={saveSettings}>Save</button>
-                <button className="bg-white text-black hover:bg-neutral-200 px-3 py-1 rounded transition-all active:bg-neutral-300" onClick={resetSettings}>Reset</button>
-              </div>
+            ))}
+            <div className="flex justify-between py-2">
+              <span>Auto Transition</span>
+              <input type="checkbox" checked={autoTransition} onChange={() => setAutoTransition(!autoTransition)} />
             </div>
-          )}
+            <div className="flex justify-end space-x-2 mt-3">
+              <button className="bg-slate-700 text-white hover:bg-gray-700 active:bg-gray-800 px-3 py-1 rounded transition-all" onClick={saveSettings}>Save</button>
+              <button className="bg-white text-black hover:bg-neutral-200 px-3 py-1 rounded transition-all active:bg-neutral-300" onClick={resetSettings}>Reset</button>
+            </div>
+          </div>
+        )}
       </div>
-      <BackgroundSelector background={background} setBackground={handleBackgroundChange} />
-      <BackgroundMusic />
+      
+      <div className="mt-6 w-full max-w-md">
+        <BackgroundSelector background={background} setBackground={handleBackgroundChange} />
+      </div>
+
+      <div className={`fixed bottom-5 ${sidebarOpen ? 'left-72 md:left-24' : 'left-5 md:left-24'} transition-all duration-300 z-20`}>
+        <BackgroundMusic />
+      </div>
     </div>
   );
 };
